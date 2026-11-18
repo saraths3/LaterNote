@@ -12,4 +12,6 @@ urlpatterns = [
     path('messages/<int:pk>/', views.message_detail, name='message_detail'),
     path('messages/<int:pk>/edit/', views.message_edit, name='message_edit'),
     path('messages/<int:pk>/delete/', views.message_delete, name='message_delete'),
+    path('profile/', views.profile_view, name='profile'),
+    path('profile/password/', views.change_password_view, name='change_password'),
 ]

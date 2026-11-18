@@ -254,3 +254,105 @@ class MessageViewsTests(TestCase):
         response = self.client.get(reverse('message_delete', kwargs={'pk': self.locked_msg.pk}))
         self.assertRedirects(response, reverse('message_detail', kwargs={'pk': self.locked_msg.pk}))
         self.assertTrue(Message.objects.filter(pk=self.locked_msg.pk).exists())
+
+
+class ProfileAndAccountTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='charlie', password='oldpassword123', email='charlie@test.com')
+
+    def test_profile_auto_created(self):
+        self.assertTrue(hasattr(self.user, 'profile'))
+        self.assertEqual(str(self.user.profile), "charlie's Profile")
+
+    def test_profile_requires_login(self):
+        response = self.client.get(reverse('profile'))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('login'), response.url)
+
+    def test_profile_view_and_update(self):
+        self.client.login(username='charlie', password='oldpassword123')
+        # GET
+        response = self.client.get(reverse('profile'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'registration/profile.html')
+
+        # POST update
+        response = self.client.post(reverse('profile'), {
+            'first_name': 'Charles',
+            'last_name': 'Brown',
+            'email': 'charles.new@test.com',
+            'bio': 'Aspiring developer writing to my future self.',
+        })
+        self.assertRedirects(response, reverse('profile'))
+
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.first_name, 'Charles')
+        self.assertEqual(self.user.last_name, 'Brown')
+        self.assertEqual(self.user.email, 'charles.new@test.com')
+        self.assertEqual(self.user.profile.bio, 'Aspiring developer writing to my future self.')
+
+    def test_change_password_view(self):
+        self.client.login(username='charlie', password='oldpassword123')
+
+        # GET
+        response = self.client.get(reverse('change_password'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'registration/change_password.html')
+
+        # POST with new password
+        response = self.client.post(reverse('change_password'), {
+            'old_password': 'oldpassword123',
+            'new_password1': 'BrandNewPassword456!',
+            'new_password2': 'BrandNewPassword456!',
+        })
+        self.assertRedirects(response, reverse('profile'))
+
+        # Verify new password works
+        self.client.logout()
+        login_success = self.client.login(username='charlie', password='BrandNewPassword456!')
+        self.assertTrue(login_success)
+
+
+class CategoryAndSearchFilterTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='diana', password='password123')
+        self.client.login(username='diana', password='password123')
+
+        future_date = timezone.localdate() + datetime.timedelta(days=20)
+        # Message 1: Career
+        self.m1 = Message.objects.create(
+            user=self.user,
+            title="Senior Developer Goals",
+            content="Aiming for promotion",
+            category="career",
+            unlock_date=future_date
+        )
+        # Message 2: Reflections
+        self.m2 = Message.objects.create(
+            user=self.user,
+            title="Mindfulness Reflection",
+            content="Remember to stay calm",
+            category="reflections",
+            unlock_date=future_date
+        )
+
+    def test_message_category_assignment(self):
+        self.assertEqual(self.m1.category, "career")
+        self.assertEqual(self.m1.get_category_display(), "Career & Study")
+
+    def test_message_list_search_by_title(self):
+        # Search for "Senior"
+        response = self.client.get(reverse('message_list') + '?q=Senior')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Senior Developer Goals")
+        self.assertNotContains(response, "Mindfulness Reflection")
+
+    def test_message_list_filter_by_category(self):
+        # Filter by reflections
+        response = self.client.get(reverse('message_list') + '?category=reflections')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Mindfulness Reflection")
+        self.assertNotContains(response, "Senior Developer Goals")
+

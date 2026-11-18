@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile – LaterNote{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-3">
+    <div class="col-lg-9">
+        <!-- Profile Header Card -->
+        <div class="card-clean p-4 p-md-5 mb-4">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="stat-icon stat-icon-total fs-2" style="width: 64px; height: 64px; border-radius: 50%;">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold mb-1 text-dark">{{ request.user.username }}</h3>
+                        <p class="text-muted small mb-0">
+                            <i class="bi bi-calendar3 me-1"></i> Time traveler since {{ request.user.date_joined|date:"F Y" }}
+                            {% if request.user.email %}
+                                • <i class="bi bi-envelope me-1"></i> {{ request.user.email }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <div>
+                    <a href="{% url 'change_password' %}" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-shield-lock me-1"></i> Change Password
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lifetime Stats -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="stat-card d-flex align-items-center gap-3">
+                    <div class="stat-icon stat-icon-total">
+                        <i class="bi bi-envelope-paper-fill"></i>
+                    </div>
+                    <div>
+                        <span class="text-muted small fw-medium text-uppercase">Total Letters</span>
+                        <h4 class="fw-bold mb-0 text-dark">{{ total_messages }}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card d-flex align-items-center gap-3">
+                    <div class="stat-icon stat-icon-locked">
+                        <i class="bi bi-lock-fill"></i>
+                    </div>
+                    <div>
+                        <span class="text-muted small fw-medium text-uppercase">Still Sealed</span>
+                        <h4 class="fw-bold mb-0 text-dark">{{ locked_count }}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card d-flex align-items-center gap-3">
+                    <div class="stat-icon stat-icon-unlocked">
+                        <i class="bi bi-unlock-fill"></i>
+                    </div>
+                    <div>
+                        <span class="text-muted small fw-medium text-uppercase">Unlocked</span>
+                        <h4 class="fw-bold mb-0 text-dark">{{ unlocked_count }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Profile Form -->
+        <div class="card-clean p-4 p-md-5">
+            <h4 class="fw-bold mb-3 text-dark">Edit Profile & Account</h4>
+            <p class="text-muted small mb-4">
+                Update your personal details and write a personal reflection bio for your time capsule.
+            </p>
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                {% if u_form.non_field_errors or p_form.non_field_errors %}
+                    <div class="alert alert-danger small py-2">
+                        {% for error in u_form.non_field_errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                        {% for error in p_form.non_field_errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label for="{{ u_form.first_name.id_for_label }}" class="form-label small fw-semibold">First Name</label>
+                        {{ u_form.first_name }}
+                        {% if u_form.first_name.errors %}
+                            <div class="text-danger small mt-1">{{ u_form.first_name.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="{{ u_form.last_name.id_for_label }}" class="form-label small fw-semibold">Last Name</label>
+                        {{ u_form.last_name }}
+                        {% if u_form.last_name.errors %}
+                            <div class="text-danger small mt-1">{{ u_form.last_name.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ u_form.email.id_for_label }}" class="form-label small fw-semibold">Email Address</label>
+                    {{ u_form.email }}
+                    {% if u_form.email.errors %}
+                        <div class="text-danger small mt-1">{{ u_form.email.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    <label for="{{ p_form.bio.id_for_label }}" class="form-label small fw-semibold">
+                        {{ p_form.bio.label }}
+                    </label>
+                    {{ p_form.bio }}
+                    {% if p_form.bio.errors %}
+                        <div class="text-danger small mt-1">{{ p_form.bio.errors.0 }}</div>
+                    {% endif %}
+                    <div class="form-text text-muted small">
+                        Share a quick snapshot of what defines your present life.
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+                        Back to Dashboard
+                    </a>
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="bi bi-check-lg me-1"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

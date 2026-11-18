@@ -201,3 +201,30 @@ footer {
     border-top: 1px solid var(--border-color);
     background-color: #ffffff;
 }
+
+/* Print Keepsake Styles */
+@media print {
+    nav, footer, .btn, .modal, .alert {
+        display: none !important;
+    }
+    body {
+        background: #ffffff !important;
+        color: #000000 !important;
+    }
+    main {
+        padding: 0 !important;
+    }
+    .container {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 0 !important;
+    }
+    .letter-sheet {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 1rem 0 !important;
+    }
+    .letter-sheet::before {
+        display: none !important;
+    }
+}

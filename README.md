@@ -13,8 +13,24 @@ Built with Python, Django, SQLite, and Bootstrap 5, this project showcases clean
   - Password validation following industry best practices.
   - Strict user isolation: users can only see, create, edit, or delete their own messages.
 
+- **User Profile & Account Settings**:
+  - Dedicated Profile page (`/profile/`) showcasing personal statistics (member since, total letters, sealed count, unlocked count).
+  - Update first name, last name, email, and personal reflection bio.
+  - Secure in-app password changes via Django's `PasswordChangeForm` and `update_session_auth_hash`.
+
+- **Message Categories & Themes**:
+  - Tag messages by category: `Personal`, `Career & Study`, `Goals & Aspirations`, `Reflections`, `Milestones & Memories`, and `Gratitude`.
+  - Color-coded badges displayed on all message cards.
+
+- **Search & Category Filtering**:
+  - Live search bar in "My Messages" allowing quick keyword lookup by title.
+  - Category pill filter to quickly view letters by theme.
+
+- **Print Keepsake View**:
+  - Clean printable layout for unlocked letters allowing users to print or save their time capsule notes as physical PDF keepsakes.
+
 - **Create a Future Message**:
-  - Simple form with message title, heartfelt content, and unlock date.
+  - Simple form with message title, category, heartfelt content, and unlock date.
   - Form validation strictly ensures the unlock date is in the future.
   - Native HTML5 datepicker with automatic `min` date constraint.
 
@@ -27,7 +43,7 @@ Built with Python, Django, SQLite, and Bootstrap 5, this project showcases clean
   - Overview dividing notes into **Locked Messages** (with countdown badges) and **Unlocked Messages** (ready to read).
 
 - **Edit & Delete**:
-  - Users can update message titles and contents.
+  - Users can update message titles, categories, and contents.
   - The unlock date remains immutable after creation to preserve the user's original commitment to time.
   - Message deletion is protected via CSRF and strictly executed via POST requests with a modal confirmation.
 
@@ -151,7 +167,7 @@ Visit `http://127.0.0.1:8000/` in your browser.
 
 ## 🧪 Running Automated Tests
 
-LaterNote includes a comprehensive test suite (19 tests) covering models, forms, access control, user isolation, view logic, and the security of locked messages.
+LaterNote includes a comprehensive test suite (26 tests) covering models, forms, access control, user isolation, view logic, profile updates, password changes, category tagging, search filtering, and the security of locked messages.
 
 Run tests using:
 ```bash
@@ -163,7 +179,9 @@ python manage.py test
 - **Form Validation**: Confirms that past and current dates are rejected during creation with friendly error messages.
 - **Security & Privacy**: Asserts that `message.content` is **never present** in the HTTP response of a locked message.
 - **User Isolation**: Verifies that users cannot read, edit, or delete messages belonging to other users (returns `404 Not Found`).
-- **Immutability of Unlock Date**: Verifies that editing a message only updates title and content, leaving the unlock date unchanged.
+- **Immutability of Unlock Date**: Verifies that editing a message updates title, category, and content, leaving the unlock date unchanged.
+- **Profile & Account Management**: Verifies automatic Profile creation via signals, profile updates (names, email, bio), and in-app password changes.
+- **Search & Category Filtering**: Tests title keyword search and category filtering in the message vault.
 
 ---
 

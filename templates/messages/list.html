@@ -15,6 +15,67 @@
     </div>
 </div>
 
+<!-- Search and Category Filters -->
+<div class="card-clean p-3 mb-4">
+    <form method="get" class="row g-2 align-items-center">
+        <!-- Search Input -->
+        <div class="col-md-7 col-lg-8">
+            <div class="input-group">
+                <span class="input-group-text bg-white text-muted border-end-0">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" name="q" value="{{ query }}" class="form-control border-start-0" placeholder="Search messages by title...">
+                {% if query %}
+                    <a href="{% url 'message_list' %}{% if selected_category %}?category={{ selected_category }}{% endif %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Hidden or selected Category parameter -->
+        {% if selected_category %}
+            <input type="hidden" name="category" value="{{ selected_category }}">
+        {% endif %}
+
+        <div class="col-md-5 col-lg-4 text-md-end">
+            <button type="submit" class="btn btn-sm btn-primary px-3">
+                <i class="bi bi-search me-1"></i> Search
+            </button>
+            {% if query or selected_category %}
+                <a href="{% url 'message_list' %}" class="btn btn-sm btn-outline-secondary ms-1">
+                    Clear Filters
+                </a>
+            {% endif %}
+        </div>
+    </form>
+
+    <!-- Category Pills -->
+    <div class="d-flex flex-wrap align-items-center gap-1 mt-3 pt-2 border-top">
+        <span class="text-muted small me-2"><i class="bi bi-funnel me-1"></i>Category:</span>
+        <a href="{% url 'message_list' %}{% if query %}?q={{ query }}{% endif %}" class="btn btn-sm {% if not selected_category %}btn-secondary{% else %}btn-outline-secondary{% endif %} rounded-pill py-0 px-2 small">
+            All
+        </a>
+        {% for cat_key, cat_label in categories %}
+            <a href="{% url 'message_list' %}?category={{ cat_key }}{% if query %}&q={{ query }}{% endif %}" class="btn btn-sm {% if selected_category == cat_key %}btn-primary{% else %}btn-outline-secondary{% endif %} rounded-pill py-0 px-2 small">
+                {{ cat_label }}
+            </a>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Active Search / Filter Summary -->
+{% if query or selected_category %}
+    <div class="alert alert-light border small py-2 d-flex justify-content-between align-items-center mb-4">
+        <div>
+            Showing results
+            {% if query %}for title matching <strong>"{{ query }}"</strong>{% endif %}
+            {% if selected_category %}in category <strong>"{{ selected_category }}"</strong>{% endif %}
+        </div>
+        <a href="{% url 'message_list' %}" class="text-decoration-none small">Show all</a>
+    </div>
+{% endif %}
+
 <!-- Locked Messages Section -->
 <div class="mb-5">
     <div class="d-flex align-items-center gap-2 mb-3">
@@ -30,9 +91,11 @@
                         <div>
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <span class="badge-locked small">
-                                    <i class="bi bi-lock-fill"></i> Unlocks in {{ msg.days_until_unlock }}d
+                                    <i class="bi bi-lock-fill"></i> In {{ msg.days_until_unlock }}d
                                 </span>
-                                <span class="text-muted small">{{ msg.created_at|date:"M d, Y" }}</span>
+                                <span class="badge rounded-pill bg-light text-secondary border small">
+                                    {{ msg.get_category_display }}
+                                </span>
                             </div>
                             <h5 class="fw-bold text-dark mb-2">{{ msg.title }}</h5>
                             <p class="text-muted small mb-3">
@@ -53,7 +116,13 @@
         </div>
     {% else %}
         <div class="card-clean p-4 text-center text-muted">
-            <p class="mb-0">You have no locked messages right now. Ready to write one for the future?</p>
+            <p class="mb-0">
+                {% if query or selected_category %}
+                    No locked messages matched your search or category filter.
+                {% else %}
+                    You have no locked messages right now. Ready to write one for the future?
+                {% endif %}
+            </p>
         </div>
     {% endif %}
 </div>
@@ -75,7 +144,9 @@
                                 <span class="badge-unlocked small">
                                     <i class="bi bi-unlock-fill"></i> Unlocked
                                 </span>
-                                <span class="text-muted small">{{ msg.created_at|date:"M d, Y" }}</span>
+                                <span class="badge rounded-pill bg-light text-secondary border small">
+                                    {{ msg.get_category_display }}
+                                </span>
                             </div>
                             <h5 class="fw-bold text-dark mb-2">{{ msg.title }}</h5>
                             <p class="text-muted small mb-3">
@@ -96,7 +167,13 @@
         </div>
     {% else %}
         <div class="card-clean p-4 text-center text-muted">
-            <p class="mb-0">No unlocked messages yet. As unlock dates arrive, your letters will be ready to read here.</p>
+            <p class="mb-0">
+                {% if query or selected_category %}
+                    No unlocked messages matched your search or category filter.
+                {% else %}
+                    No unlocked messages yet. As unlock dates arrive, your letters will be ready to read here.
+                {% endif %}
+            </p>
         </div>
     {% endif %}
 </div>
