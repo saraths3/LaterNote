@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Log In – LaterNote{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-md-6 col-lg-5">
+        <div class="card-clean p-4 p-md-5">
+            <div class="text-center mb-4">
+                <div class="stat-icon stat-icon-total mx-auto mb-3">
+                    <i class="bi bi-key-fill"></i>
+                </div>
+                <h3 class="fw-bold mb-1">Welcome Back</h3>
+                <p class="text-muted small">Log in to check on your locked and unlocked messages.</p>
+            </div>
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger small py-2">
+                        {% for error in form.non_field_errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label for="id_username" class="form-label small fw-semibold">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                        <input type="text" name="username" autofocus required id="id_username" class="form-control border-start-0" placeholder="Your username">
+                    </div>
+                    {% if form.username.errors %}
+                        <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    <label for="id_password" class="form-label small fw-semibold">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock"></i></span>
+                        <input type="password" name="password" required id="id_password" class="form-control border-start-0" placeholder="••••••••">
+                    </div>
+                    {% if form.password.errors %}
+                        <div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-2 mb-3">
+                    Log In <i class="bi bi-box-arrow-in-right ms-1"></i>
+                </button>
+            </form>
+
+            <div class="text-center pt-3 border-top">
+                <span class="text-muted small">Don't have an account yet?</span>
+                <a href="{% url 'register' %}" class="small fw-semibold text-decoration-none ms-1">Create one here</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

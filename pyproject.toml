@@ -1,0 +1,13 @@
+[project]
+name = "laternote"
+version = "0.1.0"
+description = "LaterNote - Messages to Your Future Self (Django Web Application)"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "django>=5.0,<6.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit: {{ message.title }} – LaterNote{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-3">
+    <div class="col-lg-8">
+        <div class="card-clean p-4 p-md-5">
+            <div class="mb-4">
+                <a href="{% url 'message_detail' message.pk %}" class="text-muted small text-decoration-none d-inline-flex align-items-center gap-1 mb-2">
+                    <i class="bi bi-arrow-left"></i> Back to Message
+                </a>
+                <h3 class="fw-bold mb-1">Edit Message</h3>
+                <p class="text-muted small">
+                    You can update the title and content. The unlock date cannot be altered.
+                </p>
+            </div>
+
+            <!-- Immutable Unlock Date Notice -->
+            <div class="alert alert-light border d-flex align-items-center gap-3 p-3 mb-4 rounded-3">
+                <div class="fs-4 text-warning">
+                    <i class="bi bi-calendar-lock"></i>
+                </div>
+                <div>
+                    <div class="small fw-semibold text-dark">Scheduled Unlock Date</div>
+                    <div class="text-muted small">
+                        <strong>{{ message.unlock_date|date:"F d, Y" }}</strong>
+                        {% if message.is_locked %}
+                            <span class="badge-locked ms-2">Still Sealed (in {{ message.days_until_unlock }}d)</span>
+                        {% else %}
+                            <span class="badge-unlocked ms-2">Unlocked</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger small py-2">
+                        {% for error in form.non_field_errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Title Field -->
+                <div class="mb-3">
+                    <label for="{{ form.title.id_for_label }}" class="form-label fw-semibold small">
+                        {{ form.title.label }}
+                    </label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <div class="text-danger small mt-1">{{ form.title.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Content Field -->
+                <div class="mb-4">
+                    <label for="{{ form.content.id_for_label }}" class="form-label fw-semibold small">
+                        {{ form.content.label }}
+                    </label>
+                    {{ form.content }}
+                    {% if form.content.errors %}
+                        <div class="text-danger small mt-1">{{ form.content.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="d-flex align-items-center justify-content-between pt-2 border-top">
+                    <a href="{% url 'message_detail' message.pk %}" class="btn btn-outline-secondary">
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="bi bi-check2 me-1"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

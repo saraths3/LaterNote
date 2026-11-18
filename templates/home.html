@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}LaterNote – Messages to Your Future Self{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-lg-8 text-center">
+        <span class="badge rounded-pill bg-light text-secondary border px-3 py-2 mb-3">
+            <i class="bi bi-clock-history me-1"></i> A digital time capsule for your thoughts
+        </span>
+        <h1 class="display-4 fw-bold mb-3" style="letter-spacing: -0.03em;">
+            Send a Thought Across Time
+        </h1>
+        <p class="lead text-muted mb-4 mx-auto" style="max-width: 600px;">
+            Write letters to your future self today. Choose an unlock date, and your message remains securely locked until that moment arrives.
+        </p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{% url 'register' %}" class="btn btn-primary btn-lg px-4 shadow-sm">
+                Get Started Free <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+            <a href="{% url 'login' %}" class="btn btn-outline-secondary btn-lg px-4">
+                Log In
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="row g-4 py-4 mt-2">
+    <div class="col-md-4">
+        <div class="card-clean p-4 h-100 card-clean-hover">
+            <div class="stat-icon stat-icon-total mb-3">
+                <i class="bi bi-pen"></i>
+            </div>
+            <h5 class="fw-semibold mb-2">Write Today</h5>
+            <p class="text-muted small mb-0">
+                Capture your current goals, emotions, hopes, or questions. Write freely in your private space.
+            </p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card-clean p-4 h-100 card-clean-hover">
+            <div class="stat-icon stat-icon-locked mb-3">
+                <i class="bi bi-lock-fill"></i>
+            </div>
+            <h5 class="fw-semibold mb-2">Locked in Time</h5>
+            <p class="text-muted small mb-0">
+                Choose any date in the future. The message content remains completely sealed and hidden until then.
+            </p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card-clean p-4 h-100 card-clean-hover">
+            <div class="stat-icon stat-icon-unlocked mb-3">
+                <i class="bi bi-unlock-fill"></i>
+            </div>
+            <h5 class="fw-semibold mb-2">Rediscover Tomorrow</h5>
+            <p class="text-muted small mb-0">
+                When the unlock date arrives, re-read your words with fresh eyes and celebrate your personal growth.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Quote / Philosophy Card -->
+<div class="row justify-content-center mt-5 mb-3">
+    <div class="col-lg-10">
+        <div class="p-4 rounded-4 bg-white border text-center">
+            <p class="fs-5 fst-italic text-secondary mb-2">
+                "We do not learn from experience... we learn from reflecting on experience."
+            </p>
+            <span class="small text-muted">— John Dewey</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

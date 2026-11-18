@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard – LaterNote{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-4">
+    <div class="col-md-8">
+        <h2 class="fw-bold mb-1">Welcome, {{ request.user.username }} 👋</h2>
+        <p class="text-muted mb-0">Here is an overview of your letters to the future.</p>
+    </div>
+    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+        <a href="{% url 'message_create' %}" class="btn btn-primary shadow-sm">
+            <i class="bi bi-plus-circle me-1"></i> Write New Message
+        </a>
+    </div>
+</div>
+
+<!-- Metrics Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="stat-card d-flex align-items-center gap-3">
+            <div class="stat-icon stat-icon-total">
+                <i class="bi bi-collection-fill"></i>
+            </div>
+            <div>
+                <span class="text-muted small fw-medium text-uppercase">Total Messages</span>
+                <h3 class="fw-bold mb-0 text-dark">{{ total_count }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card d-flex align-items-center gap-3">
+            <div class="stat-icon stat-icon-locked">
+                <i class="bi bi-lock-fill"></i>
+            </div>
+            <div>
+                <span class="text-muted small fw-medium text-uppercase">Locked in Time</span>
+                <h3 class="fw-bold mb-0 text-dark">{{ locked_count }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card d-flex align-items-center gap-3">
+            <div class="stat-icon stat-icon-unlocked">
+                <i class="bi bi-unlock-fill"></i>
+            </div>
+            <div>
+                <span class="text-muted small fw-medium text-uppercase">Ready to Read</span>
+                <h3 class="fw-bold mb-0 text-dark">{{ unlocked_count }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dashboard Lists -->
+<div class="row g-4">
+    <!-- Upcoming Unlock Dates -->
+    <div class="col-lg-6">
+        <div class="card-clean p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
+                    <i class="bi bi-hourglass-split text-warning"></i> Upcoming Unlocks
+                </h5>
+                <a href="{% url 'message_list' %}" class="small text-decoration-none">View All</a>
+            </div>
+
+            {% if upcoming_messages %}
+                <div class="list-group list-group-flush">
+                    {% for msg in upcoming_messages %}
+                        <a href="{% url 'message_detail' msg.pk %}" class="list-group-item list-group-item-action px-0 py-3 border-bottom d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1 fw-semibold text-dark">{{ msg.title }}</h6>
+                                <span class="text-muted small">
+                                    <i class="bi bi-calendar-event me-1"></i>Unlocks on {{ msg.unlock_date|date:"M d, Y" }}
+                                </span>
+                            </div>
+                            <span class="badge-locked small">
+                                <i class="bi bi-lock-fill"></i> in {{ msg.days_until_unlock }}d
+                            </span>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-shield-check fs-2 text-secondary mb-2 d-block"></i>
+                    <p class="mb-2">No locked messages scheduled.</p>
+                    <a href="{% url 'message_create' %}" class="btn btn-sm btn-outline-primary">Write one today</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Recently Unlocked Messages -->
+    <div class="col-lg-6">
+        <div class="card-clean p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
+                    <i class="bi bi-envelope-open-fill text-success"></i> Recently Unlocked
+                </h5>
+                <a href="{% url 'message_list' %}" class="small text-decoration-none">View All</a>
+            </div>
+
+            {% if recent_unlocked %}
+                <div class="list-group list-group-flush">
+                    {% for msg in recent_unlocked %}
+                        <a href="{% url 'message_detail' msg.pk %}" class="list-group-item list-group-item-action px-0 py-3 border-bottom d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1 fw-semibold text-dark">{{ msg.title }}</h6>
+                                <span class="text-muted small">
+                                    <i class="bi bi-check-circle me-1"></i>Unlocked {{ msg.unlock_date|date:"M d, Y" }}
+                                </span>
+                            </div>
+                            <span class="badge-unlocked small">
+                                <i class="bi bi-book-half"></i> Read
+                            </span>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-envelope-paper fs-2 text-secondary mb-2 d-block"></i>
+                    <p class="mb-0">No messages unlocked yet. Future messages will appear here once their unlock date arrives.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

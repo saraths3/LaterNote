@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Locked: {{ message.title }} – LaterNote{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-lg-7">
+        <div class="vault-card">
+            <!-- Padlock Illustration -->
+            <div class="vault-icon-circle">
+                <i class="bi bi-lock-fill"></i>
+            </div>
+
+            <span class="badge-locked mb-3">
+                <i class="bi bi-hourglass-split"></i> Unlocks in {{ days_remaining }} day{{ days_remaining|pluralize }}
+            </span>
+
+            <h3 class="fw-bold mb-2 text-dark">{{ message.title }}</h3>
+            <p class="text-muted small mb-4">
+                Created on {{ message.created_at|date:"F d, Y" }}
+            </p>
+
+            <div class="alert alert-light border py-3 px-4 mb-4 text-center rounded-3">
+                <p class="mb-1 text-secondary fw-medium">
+                    <i class="bi bi-shield-lock me-1"></i> This message is sealed in the vault.
+                </p>
+                <p class="text-muted small mb-0">
+                    The content remains completely hidden until <strong>{{ message.unlock_date|date:"F d, Y" }}</strong>.
+                </p>
+            </div>
+
+            <!-- Actions -->
+            <div class="d-flex flex-wrap justify-content-center gap-2 pt-2">
+                <a href="{% url 'message_list' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Messages
+                </a>
+                <a href="{% url 'message_edit' message.pk %}" class="btn btn-light border text-secondary">
+                    <i class="bi bi-pencil me-1"></i> Edit Title & Content
+                </a>
+                <!-- Delete Button Trigger Modal -->
+                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <i class="bi bi-trash3 me-1"></i> Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold" id="deleteModalLabel">Delete Locked Message?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-3">
+                <p class="text-muted mb-0">
+                    Are you sure you want to delete <strong>"{{ message.title }}"</strong>? This action cannot be undone.
+                </p>
+            </div>
+            <div class="modal-footer border-top-0 pt-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Keep Message</button>
+                <form action="{% url 'message_delete' message.pk %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash3 me-1"></i> Confirm Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
