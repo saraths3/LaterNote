@@ -12,7 +12,7 @@
 
 ## 📖 Overview
 
-**LaterNote** is a full-stack Django web application crafted as a showcase portfolio project for a junior Django developer. It allows users to write private reflections, milestones, and advice to their future selves. Each message is sealed with a target unlock date in the future and remains strictly locked until that date arrives.
+**LaterNote** is a full-stack Django web application crafted, it allows users to write private reflections, milestones, and advice to their future selves. Each message is sealed with a target unlock date in the future and remains strictly locked until that date arrives.
 
 ### Why this project stands out:
 - **Clean Django Conventions**: Uses pure function-based views (FBVs), native Django forms, standard ModelForms, and Django's built-in authentication without convoluted layers.
@@ -167,7 +167,7 @@ laternote/
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/laternote.git
+git clone https://github.com/saraths3/laternote.git
 cd laternote
 ```
 
