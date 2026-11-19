@@ -6,6 +6,8 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "django>=5.0,<6.0",
+    "uvicorn>=0.30.0",
+    "whitenoise>=6.6.0",
 ]
 
 [build-system]
